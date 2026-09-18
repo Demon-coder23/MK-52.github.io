@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <title>🏥 Медицинский портал | Отправка отчётов</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+    }
+
+    body {
+      background: #f5f0f0;
+      background-image:
+        linear-gradient(rgba(200, 40, 40, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200, 40, 40, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: "Segoe UI", "Roboto", system-ui, sans-serif;
+      padding: 20px;
+      margin: 0;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 32px;
+      box-shadow: 0 20px 40px rgba(180, 30, 30, 0.15), 0 4px 12px rgba(0, 0, 0, 0.05);
+      width: 100%;
+      max-width: 820px;
+      padding: 32px 28px 36px;
+      transition: all 0.2s;
+      color: #2c2c2c;
+      border: 1px solid #ffcdcd;
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 2.1rem;
+      letter-spacing: -0.5px;
+      margin: 0 0 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 3px solid #e63946;
+      padding-bottom: 20px;
+      color: #a4161a;
+      flex-wrap: wrap;
+    }
+
+    h1 .med-icon {
+      background: #e63946;
+      color: white;
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+    }
+
+    .badge {
+      background: #ffe6e6;
+      padding: 6px 16px;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      color: #b11d1d;
+      font-weight: 600;
+      border: 1px solid #f3b3b3;
+    }
+
+    .secure-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #fff5f5;
+      padding: 14px 22px;
+      border-radius: 20px;
+      margin: 20px 0 24px;
+      border-left: 6px solid #e63946;
+      color: #a4161a;
+      font-weight: 500;
+      box-shadow: 0 2px 6px rgba(230, 57, 70, 0.1);
+    }
+
+    .secure-badge span:first-child {
+      font-size: 1.8rem;
+    }
+
+    .selector-area {
+      margin-bottom: 30px;
+    }
+
+    .selector-area label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+      color: #a4161a;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.8px;
+    }
+
+    select {
+      width: 100%;
+      padding: 16px 22px;
+      background: #ffffff;
+      border: 2px solid #e0b3b3;
+      border-radius: 20px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #2c2c2c;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="%23e63946" d="M7 10l5 5 5-5z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 22px center;
+      background-size: 22px;
+      transition: 0.2s;
+    }
+
+    select:hover {
+      border-color: #e63946;
+      background-color: #fffbfb;
+    }
+
+    select:focus {
+      border-color: #e63946;
+      box-shadow: 0 0 0 4px rgba(230, 57, 70, 0.15);
+    }
+
+    .form-container {
+      background: #fefbfb;
+      border-radius: 28px;
+      padding: 24px 22px 22px;
+      border: 1px solid #f0c0c0;
+      margin-bottom: 30px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .dynamic-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field-group label {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #a4161a;
+      letter-spacing: 0.2px;
+      margin-left: 6px;
+    }
+
+    .field-group input,
+    .field-group textarea,
+    .field-group select {
+      background: #ffffff;
+      border: 2px solid #e6c3c3;
+      border-radius: 18px;
+      padding: 14px 20px;
+      font-size: 1rem;
+      color: #1e1e1e;
+      outline: none;
+      transition: all 0.2s;
+      font-family: inherit;
+      resize: vertical;
+    }
+
+    .field-group textarea {
+      min-height: 110px;
+    }
+
+    .field-group input:focus,
+    .field-group textarea:focus,
+    .field-group select:focus {
+      border-color: #e63946;
+      box-shadow: 0 0 0 4px rgba(230, 57, 70, 0.1);
+      background: #fffafa;
+    }
+
+    .field-group input::placeholder,
+    .field-group textarea::placeholder {
+      color: #b99a9a;
+      font-weight: 300;
+    }
+
+    .action-bar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 18px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: #ffffff;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 48px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #a4161a;
+      border: 2px solid #e0b3b3;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.03);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      background: #e63946;
+      border: 2px solid #e63946;
+      color: white;
+      box-shadow: 0 10px 18px rgba(230, 57, 70, 0.25);
+      flex: 1;
+      justify-content: center;
+    }
+
+    .btn-primary:hover {
+      background: #c72e3b;
+      border-color: #c72e3b;
+      transform: scale(1.01);
+      box-shadow: 0 12px 22px rgba(200, 40, 50, 0.3);
+    }
+
+    .btn-secondary {
+      background: white;
+      border: 2px solid #d49b9b;
+      color: #8b3a3a;
+    }
+
+    .btn-secondary:hover {
+      background: #fff0f0;
+      border-color: #e63946;
+    }
+
+    .status {
+      margin-top: 26px;
+      padding: 16px 22px;
+      border-radius: 48px;
+      background: #fef6f6;
+      text-align: center;
+      font-weight: 600;
+      color: #a4161a;
+      border-left: 8px solid #e63946;
+      font-size: 1rem;
+      word-break: break-word;
+      box-shadow: 0 2px 8px rgba(230,57,70,0.08);
+    }
+
+    .footnote {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 16px;
+      text-align: right;
+      color: #7a5a5a;
+      font-style: italic;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        padding: 24px 18px 28px;
+        border-radius: 24px;
+      }
+
+      h1 {
+        font-size: 1.55rem;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>
+      <span class="med-icon">🏥</span>
+      МЕДИЦИНСКИЙ ПОРТАЛ
+      <span class="badge">🔒 защищённый канал</span>
+    </h1>
+
+    <div class="secure-badge">
+      <span>🩺</span>
+      <span>На случай отказа Google Forms.</span>
+    </div>
+
+    <div class="selector-area">
+      <label>📋 Выберите тип отчёта</label>
+      <select id="formSelector"></select>
+    </div>
+
+    <div class="form-container">
+      <div id="dynamicForm" class="dynamic-form"></div>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-primary" id="sendBtn">📤 Отправить отчёт</button>
+      <button class="btn btn-secondary" id="clearBtn">🧽 Сбросить</button>
+    </div>
+
+    <div class="status" id="statusMessage">
+      ⚕️ Готов к работе. Выберите форму и заполните данные.
+    </div>
+
+    <div class="footnote">
+      * Данные передаются по защищённым вебхукам.
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const EMBED_COLOR = 0xd00000;
+      const BOT_USERNAME = "Медицинский дроид";
+
+      const WEBHOOK_SECRETS = {
+      1: "https://discord.com/api/webhooks/1429875891625791611/1HPEvEBWlz2TPC_CsTFwnsvjQQyR_Nryvo8xUeFsSTiQmnOaVfECnP2iianPVABhSEWJ",
+      2: "https://discord.com/api/webhooks/1429878446481477793/YsjcpXJ1-z1ZM91XjxjcGzPZGU5HFCvlh_eWQsrG8M-7kYqRm9C053uRcAi9KBnRkTkf",
+      3: "https://discord.com/api/webhooks/1429876752225796209/EOxg9VZKW4nUwYTLWrlPCTFTxudtcDGeXKnOOefFRouaJrs3G2Gv5VN5NTecAQ-L5EzA",
+      4: "https://discord.com/api/webhooks/1430604784867475606/p97IdpUWXjsQJ4X5Pdw_E9IBKdYSONMOqw-XkaMWUCJOITMf9gGJZR7eru2mEiBYan-m",
+      5: "https://discord.com/api/webhooks/1429877985309098046/BNmOmrSigiNmklkwl3E0KLXSIpl1A0NJ_6J8crr_VXa_67_rbSQypaGibiNS4Or0nSW7",
+      6: "https://discord.com/api/webhooks/1429879017208811520/jtN0WgGmmvPtr56hOJ0j_4jqDdhbw7wS5S6ta5fJUTVxE237gHWuVddtkp0K6yz7F904",
+      7: "https://discord.com/api/webhooks/1429879217213931580/pi4uRULhSymgHJTXhOfCMfa9VmwpVviOSPZ0hL_AZWhiNq46KewPEREp4GMjd2dCj8Du",
+      8: "https://discord.com/api/webhooks/1429879430506872893/4tHwOILaSC7s_urVBjGtlfWWFtgCJaHq2Rd_5WjY4oODtQPaaV0ohJS2G2-kDBoFBBDF",
+      9: "https://discord.com/api/webhooks/1429879770363199659/hD04X1P0wKaKW0c2qf1UWShVrlQQbWrLTXv2kmewNnrzGfrQGQ03POss_I0ZVyoImchF",
+      10: "https://discord.com/api/webhooks/1429879770363199659/hD04X1P0wKaKW0c2qf1UWShVrlQQbWrLTXv2kmewNnrzGfrQGQ03POss_I0ZVyoImchF",
+      11: "https://discord.com/api/webhooks/1429879993390858373/IWYGBgj4a9oABGWMMZvskWtgPqHuX_Q00sDJ25peBcuuqEf7OSHUQ5LLwrogfFU9Hp4U",
+      12: "https://discord.com/api/webhooks/1544791080615153836/37YwOpfcvuAdHeKijgsnwQMMCvRIfZRXgjXCG-i_U7c5WY1Q3npuA0MiLPI2P_8FLBMf",
+      13: "https://discord.com/api/webhooks/1517681714107781240/RFOQ4XOrXla71GQkESOBm7IZiugToNUsIzM1DhUonMByR6RCGJP9yb86GoXJ8YK5YOyZ"
+    };
+
+      const FORM_TYPES = [
+        { id: 1, name: "[1] Форма запроса на Отпуск" },
+        { id: 2, name: "[2] Форма отчетов Взысканий" },
+        { id: 3, name: "[3] Форма отчетов Мед.Комиссия" },
+        { id: 4, name: "[4] Форма отчетов Дежурства" },
+        { id: 5, name: "[5] Форма отчетов Мед.Деятельности" },
+        { id: 6, name: "[6] Форма отчетов Тренировок" },
+        { id: 7, name: "[7] Форма отчетов Спец.Операций" },
+        { id: 8, name: "[8] Форма отчетов Лекций/Зачетов/Практик" },
+        { id: 9, name: "[9] Дефектность (Заключение)" },
+        { id: 10, name: "[10] Дефектность (Постановление)" },
+        { id: 11, name: "[11] Форма отчетов Наборной деятельности" },
+        { id: 12, name: "[12] Форма отчета для КМД" },
+        { id: 13, name: "[13] Форма Мед. осмотров" }
+      ];
+
+      const FIELDS_MAP = {
+        1: [
+          { name: "fullName", label: "Докладывает", type: "text", placeholder: "Номер | Позывной | Звание", required: true },
+          { name: "startDate", label: "Дата начала отпуска", type: "date", required: true },
+          { name: "endDate", label: "Дата окончания", type: "date", required: true },
+          { name: "reason", label: "Причина", type: "textarea", placeholder: "...", rows: 2 }
+        ],
+
+        2: [
+          { name: "employee", label: "Докладывает", type: "text", required: true },
+          { name: "department", label: "Нарушитель", type: "text", required: true },
+          { name: "caseNumber", label: "Номер дела", type: "text", required: true },
+          { name: "violation", label: "Нарушение", type: "text", required: true },
+          { name: "penaltyType", label: "Вид рапорта", type: "select", options: ["Выдача взыскания", "Полная отработка наказания"], required: true },
+          { name: "date", label: "Дата", type: "date", required: true },
+          { name: "details", label: "Суть наказания", type: "textarea", rows: 2 }
+        ],
+
+        3: [
+          { name: "doctor1", label: "Докладывает боец", type: "text" },
+          { name: "doctor2", label: "Провел медицинскую комиссию следующему бойцу", placeholder: "Номер | Позывной | Звание | Подразделение", type: "text" },
+          { name: "doctor3", label: "Проверка знаний", type: "text" },
+          { name: "doctor4", label: "Хронические заболевания", type: "text" },
+          { name: "doctor5", label: "Протезы/Импланты", type: "text" },
+          { name: "doctor12", label: "Фобии", type: "text" },
+          { name: "doctor6", label: "Рост", type: "text" },
+          { name: "doctor7", label: "Вес", type: "text" },
+          { name: "doctor8", label: "Цвет глаз и реакция на свет", type: "text" },
+          { name: "doctor9", label: "Способность к физическим нагрузкам", type: "text" },
+          { name: "doctor10", label: "Кожный покров", type: "text" },
+          { name: "doctor11", label: "Итог", type: "text" }
+        ],
+
+        4: [
+          { name: "shiftDate", label: "Дата дежурства", type: "date", required: true },
+          { name: "shiftLead", label: "Разводящий", type: "text", required: true },
+          { name: "shiftPlace", label: "Место дежурства", type: "text", required: true },
+          { name: "personnel", label: "Состав дежурства", type: "textarea", placeholder: "Перечислите НПЗ", rows: 2 },
+          { name: "incidents", label: "Поручения", type: "textarea", rows: 2 },
+          { name: "handover", label: "Начало-Конец", type: "text" }
+        ],
+
+        5: [
+          { name: "reporter", label: "Докладывает", type: "text" },
+          { name: "activityType", label: "Вид деятельности", type: "select", options: ["Мед. помощь", "Создание Мед.препаратов", "Сбор ингр", "Операция", "Семинар", "Внеплан осмотр", "Плановый осмотр", "Санитарные работы", "Санитарная инспекция"], required: true },
+          { name: "activityDescription", label: "Описание деятельности", type: "text" },
+          { name: "participants", label: "Участники", type: "textarea", rows: 2 },
+          { name: "notes", label: "Примечания", type: "text" }
+        ],
+
+        6: [
+          { name: "trainer", label: "Проводящий", type: "text", required: true },
+          { name: "trainingType", label: "Вид тренировки", type: "text", required: true },
+          { name: "date", label: "Дата проведения", type: "date", required: true },
+          { name: "participants", label: "Проходящий(-ие)", type: "textarea", rows: 3, placeholder: "Номер | Позывной | Звание" },
+          { name: "medicines", label: "Использованные препараты", type: "textarea", rows: 2, placeholder: "Если не использовались — оставить пустым" },
+          { name: "trainingEssence", label: "Суть тренировки", type: "textarea", rows: 3 }
+        ],
+
+        7: [
+          { name: "operationCode", label: "Название операции", type: "text", required: true },
+          { name: "date", label: "Дата", type: "date", required: true },
+          { name: "dokladivaet", label: "Доклыдвает", type: "text", required: true },
+          { name: "commander", label: "Командовал", type: "text", required: true },
+          { name: "composition", label: "Состав", type: "textarea", rows: 2 },
+          { name: "description", label: "Описание", type: "textarea", rows: 2 },
+          { name: "status", label: "Статус", type: "select", options: ["Победа ВАР", "Поражение ВАР"] }
+        ],
+
+        8: [
+          { name: "eventType", label: "Тип", type: "select", options: ["Лекция", "Зачет", "Практика"], required: true },
+          { name: "title", label: "Название", type: "select", options: ["КМБ", "Введение в медицину", "Ведение Мед.Карт", "Внештатные ситуации", "Распределение и командование отрядом на СО", "Курс Интернатуры", "Курс Ординатуры", "Курс Военфельдшера", "Академия МК", "Положение о несении дежурства", "Положение о санитарной деятельности", "Тест по Уставу МК", "Школа Командования отрядом", "Маневры и знания против Зергов", "Зачёт по развёртыванию ВПГ"] },
+          { name: "lecturer", label: "Проводящий", type: "text", required: true },
+          { name: "date", label: "Дата", type: "date", required: true },
+          { name: "lessonNumber", label: "Номер лекции/практики", type: "text" },
+          { name: "student", label: "Проходящий", type: "text" },
+          { name: "result", label: "Итог", type: "select", options: ["Сдано", "Провалено"], required: true }
+        ],
+
+        9: [
+          { name: "commission", label: "Состав комиссии проводивший проверку", type: "text", required: true },
+          { name: "date", label: "Дата", type: "date", required: true },
+          { name: "target", label: "Н|П|З проверяемого", type: "text" },
+          { name: "psychResult", label: "Результаты психологической проверки", type: "text" },
+          { name: "externalMutations", label: "Внешние мутации/отклонения", type: "select", options: ["Выявлено", "Не выявлено", "Не проводилось"], required: true },
+          { name: "internalMutations", label: "Внутренние мутации/отклонения", type: "select", options: ["Выявлено", "Не выявлено", "Не проводилось"], required: true },
+          { name: "brainMutations", label: "Мутации мозга и ЦНС", type: "select", options: ["Выявлено", "Не выявлено", "Не проводилось"], required: true },
+          { name: "result", label: "Итог", type: "select", options: ["Зеленая степень", "Желтая степень", "Красная степень"], required: true }
+        ],
+
+        10: [
+          { name: "commission", label: "Состав комиссии проводивший проверку", type: "text", required: true },
+          { name: "date", label: "Дата", type: "date", required: true },
+          { name: "target", label: "Подозрение на дефектность бойца НПЗ", type: "text" },
+          { name: "reason", label: "На основе чего?", type: "text" },
+          { name: "checkType", label: "Назначена проверка", type: "select", options: ["Полная", "Физическая", "Психологическая"], required: true },
+          { name: "description", label: "Краткое описание выраженной дефектности", type: "text" }
+        ],
+
+        11: [
+          { name: "reporter", label: "Докладывает боец МК", type: "text", required: true },
+          { name: "date", label: "Дата", type: "date", required: true },
+          { name: "activity", label: "Было проведено", type: "select", options: ["Собеседование", "Набор", "Агитация"], required: true },
+          { name: "participants", label: "Участники МК", type: "textarea", rows: 2 },
+          { name: "interviewTarget", label: "Кому проводилось собеседование, если было", type: "text" }
+        ],
+        12: [
+          { name: "reporter", label: "Докладывает", type: "text", required: true },
+          { name: "date", label: "Дата", type: "date", required: true },
+          { name: "activity", label: "Вид повышения", type: "select", options: ["Присвоении звания военнослужащему", "Повышении бойца на должности", "Назначении/увольнении бойца с должности"], required: true },
+          { name: "participants", label: "Позывной бойца", type: "textarea", rows: 2 },
+          { name: "interviewTarget", label: "Старое звание/должность", type: "text" },
+          { name: "group", label: "Новое звание/должность", type: "text" },
+          { name: "group1", label: "Причина", type: "text" },
+          { name: "group2", label: "SteamID (При вступлении/снятии)", type: "text" }
+        ],
+        13: [
+          { name: "reporter", label: "Докладывает", type: "text", required: true },
+          { name: "activity", label: "Вид осмотра", type: "select", options: ["Плановый осмотр", "Внеплановый осмотр",], required: true },
+          { name: "participants", label: "Подразделение", type: "select", options: ["41", "501", "212", "21", "Пилоты", "Гвардия", "Дис. бат", "Тренеры",], required: true },
+          { name: "interviewTarget", label: "Мин. кол-во бойцов от подразделения", type: "text", required: true },
+          { name: "date", label: "Дата проведения", type: "date", required: true },
+          { name: "group1", label: "Время проведения", type: "text", required: true },
+          { name: "group2", label: "Примечание: В случае неявки, всему подразделению будет назначен Плановый Медицинский Осмотр со Специалиста+.", type: "text" }
+        ]
+      };
+
+      const formSelector = document.getElementById("formSelector");
+      const dynamicFormDiv = document.getElementById("dynamicForm");
+      const statusDiv = document.getElementById("statusMessage");
+      const sendBtn = document.getElementById("sendBtn");
+      const clearBtn = document.getElementById("clearBtn");
+
+      FORM_TYPES.forEach((ft) => {
+        const opt = document.createElement("option");
+        opt.value = ft.id;
+        opt.textContent = ft.name;
+        formSelector.appendChild(opt);
+      });
+
+      function sanitizeText(value, maxLength = 1000) {
+        return String(value ?? "")
+          .replace(/@everyone/g, "@\u200beveryone")
+          .replace(/@here/g, "@\u200bhere")
+          .replace(/<@&/g, "<@&\u200b")
+          .replace(/<@/g, "<@\u200b")
+          .trim()
+          .slice(0, maxLength);
+      }
+
+      function getNowText() {
+        return new Date().toLocaleString("ru-RU", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      }
+
+      function renderFormById(id) {
+        const fields = FIELDS_MAP[id] || [];
+
+        if (!fields.length) {
+          dynamicFormDiv.innerHTML = `<div style="padding:20px;text-align:center">⚠️ Нет описания полей</div>`;
+          return;
+        }
+
+        let html = "";
+
+        for (const field of fields) {
+          const requiredStar = field.required ? " *" : "";
+
+          if (field.type === "textarea") {
+            html += `
+              <div class="field-group">
+                <label>${field.label}${requiredStar}</label>
+                <textarea name="${field.name}" placeholder="${field.placeholder || ""}" rows="${field.rows || 3}"></textarea>
+              </div>
+            `;
+          } else if (field.type === "select") {
+            let optionsHtml = "";
+            (field.options || []).forEach((opt) => {
+              optionsHtml += `<option value="${opt}">${opt}</option>`;
+            });
+
+            html += `
+              <div class="field-group">
+                <label>${field.label}${requiredStar}</label>
+                <select name="${field.name}">${optionsHtml}</select>
+              </div>
+            `;
+          } else if (field.type === "date") {
+            html += `
+              <div class="field-group">
+                <label>${field.label}${requiredStar}</label>
+                <input type="date" name="${field.name}" />
+              </div>
+            `;
+          } else {
+            html += `
+              <div class="field-group">
+                <label>${field.label}${requiredStar}</label>
+                <input type="text" name="${field.name}" placeholder="${field.placeholder || ""}" />
+              </div>
+            `;
+          }
+        }
+
+        dynamicFormDiv.innerHTML = html;
+      }
+
+      function collectFormData() {
+        const formId = Number(formSelector.value);
+        const fields = FIELDS_MAP[formId] || [];
+        const data = {};
+
+        fields.forEach((field) => {
+          const element = dynamicFormDiv.querySelector(`[name="${field.name}"]`);
+
+          if (!element) {
+            data[field.name] = "";
+            return;
+          }
+
+          let value = element.value;
+
+          if (field.type === "date" && value === "") {
+            value = "не указана";
+          }
+
+          data[field.name] = sanitizeText(value || "—");
+        });
+
+        return data;
+      }
+
+      function validateRequired() {
+        const formId = Number(formSelector.value);
+        const fields = FIELDS_MAP[formId] || [];
+
+        for (const field of fields) {
+          if (!field.required) continue;
+
+          const element = dynamicFormDiv.querySelector(`[name="${field.name}"]`);
+          if (!element) continue;
+
+          const value = element.value.trim();
+
+          if (!value) {
+            statusDiv.innerHTML = `⚠️ Заполните обязательное поле: "${field.label}"`;
+            element.focus();
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      function field(name, value, inline = false) {
+        const cleaned = sanitizeText(value, 1000);
+
+        return {
+          name: sanitizeText(name, 256),
+          value: cleaned || "—",
+          inline
+        };
+      }
+
+      function buildPayload(formId, data) {
+        const formName = FORM_TYPES.find((item) => item.id === formId)?.name || "Отчёт";
+
+        const basePayload = {
+          username: BOT_USERNAME,
+          allowed_mentions: {
+            parse: []
+          },
+          embeds: []
+        };
+
+        if (formId === 1) {
+          basePayload.embeds.push({
+            title: "Рапорт об отпуске",
+            color: EMBED_COLOR,
+            fields: [
+              field("Докладывает", data.fullName),
+              field("Дата начала отпуска", data.startDate, true),
+              field("Дата окончания", data.endDate, true),
+              field("Причина", data.reason)
+            ],
+            footer: { text: getNowText() },
+            timestamp: new Date().toISOString()
+          });
+
+          return basePayload;
+        }
+
+        if (formId === 2) {
+          basePayload.embeds.push({
+            title: "Рапорт о взыскании",
+            color: EMBED_COLOR,
+            fields: [
+              field("Докладывает", data.employee),
+              field("Нарушитель", data.department),
+              field("Номер дела", data.caseNumber, true),
+              field("Дата", data.date, true),
+              field("Вид рапорта", data.penaltyType),
+              field("Нарушение", data.violation),
+              field("Суть наказания", data.details)
+            ],
+            footer: { text: getNowText() },
+            timestamp: new Date().toISOString()
+          });
+
+          return basePayload;
+        }
+
+        if (formId === 3) {
+          basePayload.embeds.push({
+            title: "Рапорт о Медицинской Комиссии",
+            color: EMBED_COLOR,
+            fields: [
+              field("Докладывает боец", data.doctor1),
+              field("Комиссия проведена бойцу", data.doctor2),
+              field("Проверка знаний", data.doctor3, true),
+              field("Хронические заболевания", data.doctor4, true),
+              field("Протезы/Импланты", data.doctor5, true),
+              field("Фобии", data.doctor12, true),
+              field("Рост", data.doctor6, true),
+              field("Вес", data.doctor7, true),
+              field("Цвет глаз и реакция на свет", data.doctor8),
+              field("Способность к физическим нагрузкам", data.doctor9),
+              field("Кожный покров", data.doctor10),
+              field("Итог", data.doctor11)
+            ],
+            footer: { text: getNowText() },
+            timestamp: new Date().toISOString()
+          });
+
+          return basePayload;
+        }
+
+        if (formId === 4) {
+          basePayload.embeds.push({
+            title: "Рапорт о Дежурстве",
+            color: EMBED_COLOR,
+            fields: [
+              field("Дата дежурства", data.shiftDate, true),
+              field("Разводящий", data.shiftLead, true),
+              field("Место дежурства", data.shiftPlace),
+              field("Состав дежурства", data.personnel),
+              field("Поручения", data.incidents),
+              field("Начало-Конец", data.handover)
+            ],
+            footer: { text: getNowText() },
+            timestamp: new Date().toISOString()
+          });
+
+          return basePayload;
+        }
+
+        if (formId === 5) {
+          basePayload.embeds.push({
+            title: "Рапорт о Медицинской Деятельности",
+            color: EMBED_COLOR,
+            fields: [
+              field("Докладывает", data.reporter),
+              field("Вид деятельности", data.activityType),
+              field("Описание деятельности", data.activityDescription),
+              field("Участники", data.participants),
+              field("Примечания", data.notes)
+            ],
+            footer: { text: getNowText() },
+            timestamp: new Date().toISOString()
+          });
+
+          return basePayload;
+        }
+
+        if (formId === 6) {
+          basePayload.embeds.push({
+            title: "Рапорт о Тренировках",
+            color: EMBED_COLOR,
+            fields: [
+              field("Проводящий", data.trainer),
+              field("Проходящий(-ие)", data.participants),
+              field("Вид тренировки", data.trainingType),
+              field("Использованные препараты", data.medicines || "—"),
+              field("Суть тренировки", data.trainingEssence || "—")
+            ],
+            footer: { text: getNowText() },
+            timestamp: new Date().toISOString()
+          });
+
+          return basePayload;
+        }
+
+        if (formId === 7) {
+          basePayload.embeds.push({
+            title: "Рапорт о Спец.Операции",
+            color: EMBED_COLOR,
+            fields: [
+              field("Название операции", data.operationCode),
+              field("Дата", data.date, true),
+              field("Докладывает", data.dokladivaet, true),
+              field("Командовал", data.commander, true),
+              field("Состав", data.composition),
+              field("Описание", data.description),
+              field("Статус", data.status)
+            ],
+            footer: { text: getNowText() },
+            timestamp: new Date().toISOString()
+          });
+
+          return basePayload;
+        }
+
+        if (formId === 8) {
+          basePayload.embeds.push({
+            title: "Форма отчетов Лекций/Зачетов/Практик",
+            color: EMBED_COLOR,
+            fields: [
+              field("Тип", data.eventType, true),
+              field("Название", data.title, true),
+              field("Проводящий", data.lecturer),
+              field("Дата", data.date, true),
+              field("Номер лекции/практики", data.lessonNumber || "—", true),
+              field("Проходящий", data.student),
+              field("Итог", data.result)
+            ],
+            footer: { text: getNowText() },
+            timestamp: new Date().toISOString()
+          });
+
+          return basePayload;
+        }
+
+        if (formId === 9) {
+          basePayload.embeds.push({
+            title: "Дефектность — Заключение",
+            color: EMBED_COLOR,
+            fields: [
+              field("Состав комиссии", data.commission),
+              field("Дата", data.date, true),
+              field("Проверяемый", data.target, true),
+              field("Результаты психологической проверки", data.psychResult),
+              field("Внешние мутации/отклонения", data.externalMutations, true),
+              field("Внутренние мутации/отклонения", data.internalMutations, true),
+              field("Мутации мозга и ЦНС", data.brainMutations, true),
+              field("Итог", data.result)
+            ],
+            footer: { text: getNowText() },
+            timestamp: new Date().toISOString()
+          });
+
+          return basePayload;
+        }
+
+        if (formId === 10) {
+          basePayload.embeds.push({
+            title: "Дефектность — Постановление",
+            color: EMBED_COLOR,
+            fields: [
+              field("Состав комиссии", data.commission),
+              field("Дата", data.date, true),
+              field("Подозрение на дефектность бойца", data.target, true),
+              field("На основе чего?", data.reason),
+              field("Назначена проверка", data.checkType),
+              field("Краткое описание выраженной дефектности", data.description)
+            ],
+            footer: { text: getNowText() },
+            timestamp: new Date().toISOString()
+          });
+
+          return basePayload;
+        }
+
+        if (formId === 11) {
+          basePayload.embeds.push({
+            title: "Рапорт о Наборной Деятельности",
+            color: EMBED_COLOR,
+            fields: [
+              field("Докладывает боец МК", data.reporter),
+              field("Дата", data.date, true),
+              field("Было проведено", data.activity, true),
+              field("Участники МК", data.participants),
+              field("Кому проводилось собеседование", data.interviewTarget)
+            ],
+            footer: { text: getNowText() },
+            timestamp: new Date().toISOString()
+          });
+
+          return basePayload;
+        }
+
+        if (formId === 12) {
+          basePayload.embeds.push({
+            title: "Рапорт для КМД",
+            color: EMBED_COLOR,
+            fields: [
+              field("Докладывает", data.reporter),
+              field("Дата", data.date, true),
+              field("Вид повышения", data.activity, true),
+              field("Позывной бойца", data.participants),
+              field("Старое звание/должность", data.interviewTarget),
+              field("Новое звание/должность", data.group),
+              field("Причина", data.group1),
+              field("SteamID", data.group2)
+            ],
+            footer: { text: getNowText() },
+            timestamp: new Date().toISOString()
+          });
+
+          return basePayload;
+        }
+       if (formId === 13) {
+          basePayload.embeds.push({
+            title: "Форма для осмотров",
+            color: EMBED_COLOR,
+            fields: [
+              field("Докладывает", data.reporter),
+              field("Вид осмотра", data.activity),
+              field("Подразделение", data.participants),
+              field("Мин. кол-во бойцов от подразделения", data.interviewTarget),
+              field("Дата проведения", data.date, true),
+              field("Время проведения", data.group1),
+              field("Примечание: В случае неявки, всему подразделению будет назначен Плановый Медицинский Осмотр со Специалиста+.", data.group2)
+            ],
+            footer: { text: getNowText() },
+            timestamp: new Date().toISOString()
+          });
+
+          return basePayload;
+        }
+
+        const fields = Object.entries(data).map(([key, value]) => field(key, value));
+
+        basePayload.embeds.push({
+          title: formName,
+          color: EMBED_COLOR,
+          fields,
+          footer: { text: getNowText() },
+          timestamp: new Date().toISOString()
+        });
+
+        return basePayload;
+      }
+
+      function clearFormFields() {
+        const inputs = dynamicFormDiv.querySelectorAll("input, textarea, select");
+
+        inputs.forEach((element) => {
+          if (element.tagName === "SELECT") {
+            element.selectedIndex = 0;
+          } else {
+            element.value = "";
+          }
+        });
+
+        statusDiv.innerHTML = "🧽 Поля очищены.";
+      }
+
+      async function sendToWebhook() {
+        const formId = Number(formSelector.value);
+        const webhookUrl = WEBHOOK_SECRETS[formId];
+
+        if (!webhookUrl || webhookUrl === "PASTE_WEBHOOK_HERE") {
+          statusDiv.innerHTML = "❌ Для этой формы не указан webhook.";
+          return;
+        }
+
+        if (!validateRequired()) return;
+
+        const formData = collectFormData();
+        const payload = buildPayload(formId, formData);
+        const formName = FORM_TYPES.find((ft) => ft.id === formId)?.name || "Отчёт";
+
+        statusDiv.innerHTML = "⏳ Отправка отчёта...";
+        sendBtn.disabled = true;
+        sendBtn.style.opacity = "0.7";
+        sendBtn.style.cursor = "not-allowed";
+
+        try {
+          const response = await fetch(webhookUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+          });
+
+          if (response.ok) {
+            statusDiv.innerHTML = `✅ Отчёт «${formName}» успешно отправлен! ${getNowText()}`;
+          } else {
+            const text = await response.text();
+            throw new Error(`HTTP ${response.status}: ${text}`);
+          }
+        } catch (error) {
+          console.error(error);
+          statusDiv.innerHTML = `❌ Ошибка отправки: ${error.message}`;
+        } finally {
+          sendBtn.disabled = false;
+          sendBtn.style.opacity = "1";
+          sendBtn.style.cursor = "pointer";
+        }
+      }
+
+      formSelector.value = "1";
+      renderFormById(1);
+
+      formSelector.addEventListener("change", (event) => {
+        renderFormById(Number(event.target.value));
+        statusDiv.innerHTML = "🩺 Форма загружена. Заполните данные.";
+      });
+
+      clearBtn.addEventListener("click", clearFormFields);
+      sendBtn.addEventListener("click", sendToWebhook);
+
+      window.addEventListener("load", () => {
+        statusDiv.innerHTML = "🩺 Система готова.";
+      });
+    })();
+  </script>
+</body>
+</html>
