@@ -333,21 +333,12 @@
       const EMBED_COLOR = 0xd00000;
       const BOT_USERNAME = "Медицинский дроид";
 
-      const WEBHOOK_SECRETS = {
-      1: "https://discord.com/api/webhooks/1429875891625791611/1HPEvEBWlz2TPC_CsTFwnsvjQQyR_Nryvo8xUeFsSTiQmnOaVfECnP2iianPVABhSEWJ",
-      2: "https://discord.com/api/webhooks/1429878446481477793/YsjcpXJ1-z1ZM91XjxjcGzPZGU5HFCvlh_eWQsrG8M-7kYqRm9C053uRcAi9KBnRkTkf",
-      3: "https://discord.com/api/webhooks/1429876752225796209/EOxg9VZKW4nUwYTLWrlPCTFTxudtcDGeXKnOOefFRouaJrs3G2Gv5VN5NTecAQ-L5EzA",
-      4: "https://discord.com/api/webhooks/1430604784867475606/p97IdpUWXjsQJ4X5Pdw_E9IBKdYSONMOqw-XkaMWUCJOITMf9gGJZR7eru2mEiBYan-m",
-      5: "https://discord.com/api/webhooks/1429877985309098046/BNmOmrSigiNmklkwl3E0KLXSIpl1A0NJ_6J8crr_VXa_67_rbSQypaGibiNS4Or0nSW7",
-      6: "https://discord.com/api/webhooks/1429879017208811520/jtN0WgGmmvPtr56hOJ0j_4jqDdhbw7wS5S6ta5fJUTVxE237gHWuVddtkp0K6yz7F904",
-      7: "https://discord.com/api/webhooks/1429879217213931580/pi4uRULhSymgHJTXhOfCMfa9VmwpVviOSPZ0hL_AZWhiNq46KewPEREp4GMjd2dCj8Du",
-      8: "https://discord.com/api/webhooks/1429879430506872893/4tHwOILaSC7s_urVBjGtlfWWFtgCJaHq2Rd_5WjY4oODtQPaaV0ohJS2G2-kDBoFBBDF",
-      9: "https://discord.com/api/webhooks/1429879770363199659/hD04X1P0wKaKW0c2qf1UWShVrlQQbWrLTXv2kmewNnrzGfrQGQ03POss_I0ZVyoImchF",
-      10: "https://discord.com/api/webhooks/1429879770363199659/hD04X1P0wKaKW0c2qf1UWShVrlQQbWrLTXv2kmewNnrzGfrQGQ03POss_I0ZVyoImchF",
-      11: "https://discord.com/api/webhooks/1429879993390858373/IWYGBgj4a9oABGWMMZvskWtgPqHuX_Q00sDJ25peBcuuqEf7OSHUQ5LLwrogfFU9Hp4U",
-      12: "https://discord.com/api/webhooks/1544791080615153836/37YwOpfcvuAdHeKijgsnwQMMCvRIfZRXgjXCG-i_U7c5WY1Q3npuA0MiLPI2P_8FLBMf",
-      13: "https://discord.com/api/webhooks/1517681714107781240/RFOQ4XOrXla71GQkESOBm7IZiugToNUsIzM1DhUonMByR6RCGJP9yb86GoXJ8YK5YOyZ"
-    };
+      // Реальные webhook-адреса Discord здесь больше НЕ хранятся — раньше
+      // они лежали прямо в этом файле открытым текстом, а поскольку сайт
+      // на GitHub Pages, это значит, что их мог скопировать кто угодно
+      // через "Просмотр кода страницы". Теперь форма отправляет данные на
+      // защищённый эндпоинт на сервере, который сам знает нужный webhook.
+      const RELAY_URL = "https://panel-aurex9.aurex-9.pro/reserve_report_relay.php";
 
       const FORM_TYPES = [
         { id: 1, name: "[1] Форма запроса на Отпуск" },
@@ -408,11 +399,14 @@
         ],
 
         5: [
-          { name: "reporter", label: "Докладывает", type: "text" },
-          { name: "activityType", label: "Вид деятельности", type: "select", options: ["Мед. помощь", "Создание Мед.препаратов", "Сбор ингр", "Операция", "Семинар", "Внеплан осмотр", "Плановый осмотр", "Санитарные работы", "Санитарная инспекция"], required: true },
-          { name: "activityDescription", label: "Описание деятельности", type: "text" },
-          { name: "participants", label: "Участники", type: "textarea", rows: 2 },
-          { name: "notes", label: "Примечания", type: "text" }
+          { name: "reporter", label: "Докладывает боец МК (Н|П|З)", type: "text", required: true },
+          { name: "reportType", label: "Тип рапорта (Медицинская помощь)", type: "fixed", value: "Медицинская помощь" },
+          { name: "patient", label: "Пациент", type: "text", placeholder: "Номер | Позывной | Звание", required: true },
+          { name: "complaints", label: "Жалобы", type: "textarea", rows: 2 },
+          { name: "diagnosis", label: "Диагноз", type: "textarea", rows: 2 },
+          { name: "medicines", label: "Использованные препараты", type: "textarea", rows: 2, placeholder: "Если не использовались — оставить пустым" },
+          { name: "assistants", label: "Ассистенты (Н|П|З)", type: "textarea", rows: 2, placeholder: "Если не было — оставить пустым" },
+          { name: "date", label: "Дата", type: "date", required: true }
         ],
 
         6: [
@@ -562,6 +556,13 @@
               <div class="field-group">
                 <label>${field.label}${requiredStar}</label>
                 <input type="date" name="${field.name}" />
+              </div>
+            `;
+          } else if (field.type === "fixed") {
+            html += `
+              <div class="field-group">
+                <label>${field.label}</label>
+                <input type="text" name="${field.name}" value="${field.value}" readonly style="opacity:.75;cursor:default;" />
               </div>
             `;
           } else {
@@ -728,14 +729,17 @@
 
         if (formId === 5) {
           basePayload.embeds.push({
-            title: "Рапорт о Медицинской Деятельности",
+            title: "Рапорт о Медицинской Помощи",
             color: EMBED_COLOR,
             fields: [
-              field("Докладывает", data.reporter),
-              field("Вид деятельности", data.activityType),
-              field("Описание деятельности", data.activityDescription),
-              field("Участники", data.participants),
-              field("Примечания", data.notes)
+              field("Докладывает боец МК (Н|П|З)", data.reporter),
+              field("Тип рапорта", data.reportType),
+              field("Пациент", data.patient),
+              field("Жалобы", data.complaints || "—"),
+              field("Диагноз", data.diagnosis || "—"),
+              field("Использованные препараты", data.medicines || "—"),
+              field("Ассистенты (Н|П|З)", data.assistants || "—"),
+              field("Дата", data.date)
             ],
             footer: { text: getNowText() },
             timestamp: new Date().toISOString()
@@ -929,12 +933,6 @@
 
       async function sendToWebhook() {
         const formId = Number(formSelector.value);
-        const webhookUrl = WEBHOOK_SECRETS[formId];
-
-        if (!webhookUrl || webhookUrl === "PASTE_WEBHOOK_HERE") {
-          statusDiv.innerHTML = "❌ Для этой формы не указан webhook.";
-          return;
-        }
 
         if (!validateRequired()) return;
 
@@ -948,19 +946,21 @@
         sendBtn.style.cursor = "not-allowed";
 
         try {
-          const response = await fetch(webhookUrl, {
+          const response = await fetch(RELAY_URL, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ formId, data: formData, payload })
           });
 
-          if (response.ok) {
+          const result = await response.json().catch(() => null);
+
+          if (response.ok && result && result.ok) {
             statusDiv.innerHTML = `✅ Отчёт «${formName}» успешно отправлен! ${getNowText()}`;
           } else {
-            const text = await response.text();
-            throw new Error(`HTTP ${response.status}: ${text}`);
+            const errMsg = (result && result.error) ? result.error : `HTTP ${response.status}`;
+            throw new Error(errMsg);
           }
         } catch (error) {
           console.error(error);
