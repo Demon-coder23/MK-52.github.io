@@ -333,8 +333,21 @@
       const EMBED_COLOR = 0xd00000;
       const BOT_USERNAME = "Медицинский дроид";
 
-      
-      const RELAY_URL = "https://web-mk52.aurex-9.pro/reserve_report_relay.php";
+      const WEBHOOK_SECRETS = {
+      1: "https://discord.com/api/webhooks/1429875891625791611/1HPEvEBWlz2TPC_CsTFwnsvjQQyR_Nryvo8xUeFsSTiQmnOaVfECnP2iianPVABhSEWJ",
+      2: "https://discord.com/api/webhooks/1429878446481477793/YsjcpXJ1-z1ZM91XjxjcGzPZGU5HFCvlh_eWQsrG8M-7kYqRm9C053uRcAi9KBnRkTkf",
+      3: "https://discord.com/api/webhooks/1429876752225796209/EOxg9VZKW4nUwYTLWrlPCTFTxudtcDGeXKnOOefFRouaJrs3G2Gv5VN5NTecAQ-L5EzA",
+      4: "https://discord.com/api/webhooks/1430604784867475606/p97IdpUWXjsQJ4X5Pdw_E9IBKdYSONMOqw-XkaMWUCJOITMf9gGJZR7eru2mEiBYan-m",
+      5: "https://discord.com/api/webhooks/1429877985309098046/BNmOmrSigiNmklkwl3E0KLXSIpl1A0NJ_6J8crr_VXa_67_rbSQypaGibiNS4Or0nSW7",
+      6: "https://discord.com/api/webhooks/1429879017208811520/jtN0WgGmmvPtr56hOJ0j_4jqDdhbw7wS5S6ta5fJUTVxE237gHWuVddtkp0K6yz7F904",
+      7: "https://discord.com/api/webhooks/1429879217213931580/pi4uRULhSymgHJTXhOfCMfa9VmwpVviOSPZ0hL_AZWhiNq46KewPEREp4GMjd2dCj8Du",
+      8: "https://discord.com/api/webhooks/1429879430506872893/4tHwOILaSC7s_urVBjGtlfWWFtgCJaHq2Rd_5WjY4oODtQPaaV0ohJS2G2-kDBoFBBDF",
+      9: "https://discord.com/api/webhooks/1429879770363199659/hD04X1P0wKaKW0c2qf1UWShVrlQQbWrLTXv2kmewNnrzGfrQGQ03POss_I0ZVyoImchF",
+      10: "https://discord.com/api/webhooks/1429879770363199659/hD04X1P0wKaKW0c2qf1UWShVrlQQbWrLTXv2kmewNnrzGfrQGQ03POss_I0ZVyoImchF",
+      11: "https://discord.com/api/webhooks/1429879993390858373/IWYGBgj4a9oABGWMMZvskWtgPqHuX_Q00sDJ25peBcuuqEf7OSHUQ5LLwrogfFU9Hp4U",
+      12: "https://discord.com/api/webhooks/1544791080615153836/37YwOpfcvuAdHeKijgsnwQMMCvRIfZRXgjXCG-i_U7c5WY1Q3npuA0MiLPI2P_8FLBMf",
+      13: "https://discord.com/api/webhooks/1517681714107781240/RFOQ4XOrXla71GQkESOBm7IZiugToNUsIzM1DhUonMByR6RCGJP9yb86GoXJ8YK5YOyZ"
+    };
 
       const FORM_TYPES = [
         { id: 1, name: "[1] Форма запроса на Отпуск" },
@@ -395,18 +408,11 @@
         ],
 
         5: [
-          { name: "reporter", label: "Докладывает боец МК (Н|П|З)", type: "text", required: true, placeholder: "Номер | Позывной | Звание" },
-          { name: "activityType", label: "Тип рапорта", type: "select", required: true, options: [
-              "Медицинская помощь",
-              "Создание Медицинских Препаратов",
-              "Санитарные работы",
-              "Сан.инспекция",
-              "Сбор Медицинских Ингредиентов",
-              "Операция",
-              "Семинар",
-              "Внеплановый Медицинский Осмотр",
-              "Плановый Медицинский Осмотр"
-            ] }
+          { name: "reporter", label: "Докладывает", type: "text" },
+          { name: "activityType", label: "Вид деятельности", type: "select", options: ["Мед. помощь", "Создание Мед.препаратов", "Сбор ингр", "Операция", "Семинар", "Внеплан осмотр", "Плановый осмотр", "Санитарные работы", "Санитарная инспекция"], required: true },
+          { name: "activityDescription", label: "Описание деятельности", type: "text" },
+          { name: "participants", label: "Участники", type: "textarea", rows: 2 },
+          { name: "notes", label: "Примечания", type: "text" }
         ],
 
         6: [
@@ -519,119 +525,6 @@
         });
       }
 
-      
-      const MED_SUBFORMS = {
-        "Медицинская помощь": [
-          { name: "patient", label: "Пациент", type: "text", required: true, placeholder: "Номер | Позывной | Звание" },
-          { name: "complaints", label: "Жалобы", type: "textarea", rows: 2, required: true },
-          { name: "diagnosis", label: "Диагноз", type: "textarea", rows: 2, required: true },
-          { name: "medicines", label: "Использованные препараты", type: "textarea", rows: 2, required: true, placeholder: "Бакта, Морферум, Бакта" },
-          { name: "assistants", label: "Ассистенты (Н|П|З)", type: "textarea", rows: 2, placeholder: "Если не было — оставить пустым" },
-          { name: "date", label: "Дата", type: "date", required: true }
-        ],
-        "Создание Медицинских Препаратов": [
-          { name: "participants", label: "Данные бойцы участвовали (Н|П|З)", type: "textarea", rows: 2, required: true, placeholder: "Номер | Позывной | Звание" },
-          { name: "used", label: "Было использовано", type: "text", required: true, placeholder: "Синий кристалл х6" },
-          { name: "made", label: "Было сделано", type: "text", required: true, placeholder: "Бакта, Морферум, Бакта" },
-          { name: "date", label: "Дата отправки рапорта", type: "date", required: true }
-        ],
-        "Санитарные работы": [
-          { name: "participants", label: "Данные бойцы участвовали (Н|П|З)", type: "textarea", rows: 2, required: true, placeholder: "Номер | Позывной | Звание" },
-          { name: "place", label: "Место проведения", type: "text", required: true },
-          { name: "time", label: "Время проведения", type: "text", required: true, placeholder: "14:00" },
-          { name: "infectionType", label: "Вид заражения", type: "select", required: true, options: [
-              "Биологическое", "Химическое", "Радиационное", "Комбинированное",
-              "Дератизация (грызуны)", "Дезинсекция (насекомые)"
-            ] },
-          { name: "incident", label: "Нештатная ситуация", type: "text", placeholder: "Вписать что было если была" }
-        ],
-        "Сан.инспекция": [
-          { name: "participants", label: "Данные бойцы участвовали (Н|П|З)", type: "textarea", rows: 2, required: true, placeholder: "Номер | Позывной | Звание" },
-          { name: "place", label: "Место проведения", type: "text", required: true },
-          { name: "time", label: "Время проведения", type: "text", required: true, placeholder: "14:00" },
-          { name: "examResult", label: "Результат обследования (/roll 5)", type: "select", required: true, options: [
-              "1 — Инфекционное заражение", "2 — Радиационное заражение", "3 — Интоксикационное заражение",
-              "4 — Грызуны в помещении", "5 — Насекомые в помещении", "Заражение не выявлено"
-            ] },
-          { name: "date", label: "Дата", type: "date", required: true }
-        ],
-        "Сбор Медицинских Ингредиентов": [
-          { name: "participants", label: "Данные бойцы участвовали (Н|П|З)", type: "textarea", rows: 2, required: true, placeholder: "Номер | Позывной | Звание" },
-          { name: "collected", label: "Собрали", type: "text", required: true, placeholder: "Синий кристалл х6" },
-          { name: "date", label: "Дата отправки рапорта", type: "date", required: true }
-        ],
-        "Операция": [
-          { name: "patient", label: "Пациент", type: "text", required: true, placeholder: "Номер | Позывной | Звание" },
-          { name: "essence", label: "Суть операции", type: "textarea", rows: 2, required: true },
-          { name: "notes", label: "Примечания", type: "text" },
-          { name: "medicines", label: "Препараты", type: "textarea", rows: 2, required: true, placeholder: "Бакта, Морферум, Бакта" },
-          { name: "date", label: "Дата", type: "date", required: true }
-        ],
-        "Семинар": [
-          { name: "topic", label: "Тема", type: "text", required: true },
-          { name: "listeners", label: "Данные бойцы слушали (Н|П|З)", type: "textarea", rows: 2, required: true, placeholder: "Номер | Позывной | Звание" },
-          { name: "date", label: "Дата", type: "date", required: true }
-        ],
-        "Внеплановый Медицинский Осмотр": [
-          { name: "commander", label: "Командовал мед осмотром (Н|П|З)", type: "text", required: true, placeholder: "Номер | Позывной | Звание" },
-          { name: "participants", label: "Участники мед осмотра (Н|П|З)", type: "textarea", rows: 2, required: true, placeholder: "Номер | Позывной | Звание" },
-          { name: "unit", label: "Подразделение осмотра", type: "text", required: true, placeholder: "501, 212 или другие подразделения" },
-          { name: "found", label: "Было выявлено", type: "textarea", rows: 2, required: true },
-          { name: "date", label: "Дата", type: "date", required: true }
-        ],
-        "Плановый Медицинский Осмотр": [
-          { name: "npz", label: "НПЗ | подразделение бойца", type: "text", required: true, placeholder: "0221 | Sisun | Рядовой | СТ" },
-          { name: "psychResult", label: "Результаты психологической проверки", type: "select", required: true, options: ["Пройдена", "Не пройдена", "Другое (указать)"] },
-          { name: "mutations", label: "Внешние мутации/отклонения", type: "select", required: true, options: ["Не имеются", "Другое (указать)"] },
-          { name: "conclusion", label: "Заключение", type: "select", required: true, options: ["Полностью здоров", "Требуется медицинская помощь", "Требуется проверка на дефектность"] },
-          { name: "date", label: "Дата", type: "date", required: true }
-        ]
-      };
-
-      function renderMedSubform(subtype) {
-        const container = document.getElementById("medSubformContainer");
-        if (!container) return;
-        const subFields = MED_SUBFORMS[subtype] || [];
-        let html = "";
-        for (const field of subFields) {
-          const requiredStar = field.required ? " *" : "";
-          if (field.type === "textarea") {
-            html += `
-              <div class="field-group">
-                <label>${field.label}${requiredStar}</label>
-                <textarea name="${field.name}" placeholder="${field.placeholder || ""}" rows="${field.rows || 3}"></textarea>
-              </div>
-            `;
-          } else if (field.type === "select") {
-            let optionsHtml = "";
-            (field.options || []).forEach((opt) => {
-              optionsHtml += `<option value="${opt}">${opt}</option>`;
-            });
-            html += `
-              <div class="field-group">
-                <label>${field.label}${requiredStar}</label>
-                <select name="${field.name}">${optionsHtml}</select>
-              </div>
-            `;
-          } else if (field.type === "date") {
-            html += `
-              <div class="field-group">
-                <label>${field.label}${requiredStar}</label>
-                <input type="date" name="${field.name}" />
-              </div>
-            `;
-          } else {
-            html += `
-              <div class="field-group">
-                <label>${field.label}${requiredStar}</label>
-                <input type="text" name="${field.name}" placeholder="${field.placeholder || ""}" />
-              </div>
-            `;
-          }
-        }
-        container.innerHTML = html;
-      }
-
       function renderFormById(id) {
         const fields = FIELDS_MAP[id] || [];
 
@@ -671,13 +564,6 @@
                 <input type="date" name="${field.name}" />
               </div>
             `;
-          } else if (field.type === "fixed") {
-            html += `
-              <div class="field-group">
-                <label>${field.label}</label>
-                <input type="text" name="${field.name}" value="${field.value}" readonly style="opacity:.75;cursor:default;" />
-              </div>
-            `;
           } else {
             html += `
               <div class="field-group">
@@ -689,18 +575,6 @@
         }
 
         dynamicFormDiv.innerHTML = html;
-
-        if (id === 5) {
-          const subDiv = document.createElement("div");
-          subDiv.id = "medSubformContainer";
-          dynamicFormDiv.appendChild(subDiv);
-
-          const typeSelect = dynamicFormDiv.querySelector('[name="activityType"]');
-          if (typeSelect) {
-            typeSelect.addEventListener("change", () => renderMedSubform(typeSelect.value));
-            renderMedSubform(typeSelect.value);
-          }
-        }
       }
 
       function collectFormData() {
@@ -725,22 +599,6 @@
           data[field.name] = sanitizeText(value || "—");
         });
 
-        if (formId === 5) {
-          const subFields = MED_SUBFORMS[data.activityType] || [];
-          subFields.forEach((field) => {
-            const element = dynamicFormDiv.querySelector(`[name="${field.name}"]`);
-            if (!element) {
-              data[field.name] = "";
-              return;
-            }
-            let value = element.value;
-            if (field.type === "date" && value === "") {
-              value = "не указана";
-            }
-            data[field.name] = sanitizeText(value || "—");
-          });
-        }
-
         return data;
       }
 
@@ -760,25 +618,6 @@
             statusDiv.innerHTML = `⚠️ Заполните обязательное поле: "${field.label}"`;
             element.focus();
             return false;
-          }
-        }
-
-        if (formId === 5) {
-          const activityType = dynamicFormDiv.querySelector('[name="activityType"]')?.value;
-          const subFields = MED_SUBFORMS[activityType] || [];
-          for (const field of subFields) {
-            if (!field.required) continue;
-
-            const element = dynamicFormDiv.querySelector(`[name="${field.name}"]`);
-            if (!element) continue;
-
-            const value = element.value.trim();
-
-            if (!value) {
-              statusDiv.innerHTML = `⚠️ Заполните обязательное поле: "${field.label}"`;
-              element.focus();
-              return false;
-            }
           }
         }
 
@@ -888,19 +727,16 @@
         }
 
         if (formId === 5) {
-          const subFields = MED_SUBFORMS[data.activityType] || [];
-          const embedFields = [
-            field("Докладывает боец МК (Н|П|З)", data.reporter),
-            field("Тип рапорта", data.activityType)
-          ];
-          subFields.forEach((f) => {
-            embedFields.push(field(f.label, data[f.name] || "—"));
-          });
-
           basePayload.embeds.push({
             title: "Рапорт о Медицинской Деятельности",
             color: EMBED_COLOR,
-            fields: embedFields,
+            fields: [
+              field("Докладывает", data.reporter),
+              field("Вид деятельности", data.activityType),
+              field("Описание деятельности", data.activityDescription),
+              field("Участники", data.participants),
+              field("Примечания", data.notes)
+            ],
             footer: { text: getNowText() },
             timestamp: new Date().toISOString()
           });
@@ -1093,6 +929,12 @@
 
       async function sendToWebhook() {
         const formId = Number(formSelector.value);
+        const webhookUrl = WEBHOOK_SECRETS[formId];
+
+        if (!webhookUrl || webhookUrl === "PASTE_WEBHOOK_HERE") {
+          statusDiv.innerHTML = "❌ Для этой формы не указан webhook.";
+          return;
+        }
 
         if (!validateRequired()) return;
 
@@ -1106,21 +948,19 @@
         sendBtn.style.cursor = "not-allowed";
 
         try {
-          const response = await fetch(RELAY_URL, {
+          const response = await fetch(webhookUrl, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
             },
-            body: JSON.stringify({ formId, data: formData, payload })
+            body: JSON.stringify(payload)
           });
 
-          const result = await response.json().catch(() => null);
-
-          if (response.ok && result && result.ok) {
+          if (response.ok) {
             statusDiv.innerHTML = `✅ Отчёт «${formName}» успешно отправлен! ${getNowText()}`;
           } else {
-            const errMsg = (result && result.error) ? result.error : `HTTP ${response.status}`;
-            throw new Error(errMsg);
+            const text = await response.text();
+            throw new Error(`HTTP ${response.status}: ${text}`);
           }
         } catch (error) {
           console.error(error);
